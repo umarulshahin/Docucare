@@ -86,6 +86,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Docucare.wsgi.application'
 
+AUTH_USER_MODEL = 'Authentication_app.Patient_Info'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -157,6 +164,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 
 SIMPLE_JWT = {

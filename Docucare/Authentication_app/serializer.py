@@ -8,7 +8,7 @@ class PatientSerializer(serializers.ModelSerializer):
     class Meta:
         
         model = Patient_Info
-        fields = ['username', 'phone', 'gender', 'age', 'place']
+        fields = ['id','username', 'phone', 'gender', 'age', 'place']
         
     def validate(self, attrs):
         
