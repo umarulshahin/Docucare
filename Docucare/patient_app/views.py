@@ -8,8 +8,13 @@ from Authentication_app.models import *
 from Authentication_app.serializer import *
 from rest_framework.permissions import IsAuthenticated
 import environ
-import json
 import google.generativeai as genai
+import whisper
+import os
+import tempfile
+from whisper.audio import load_audio
+
+
 
 
 # ........................ Get Patient Details and Generate jwt token .........................
@@ -147,3 +152,52 @@ def Organize_Patient_Data(request):
         print(f"Error processing medical text: {e}")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+        
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def Process_Audio_Records(request): 
+
+    file_path = request.FILES.get('audio')
+    id = request.data.get('id')
+    
+    try: 
+        
+        if not file_path: 
+            return Response({"error":"Audio file required"},status=status.HTTP_400_BAD_REQUEST)
+        elif not id: 
+            return Response({"error":"Patient id required"},status=status.HTTP_400_BAD_REQUEST)
+        
+                # Create a temporary file with the correct extension
+        temp_dir = tempfile.mkdtemp()
+        temp_path = os.path.join(temp_dir, f"temp_audio.{file_path.name.split('.')[-1]}")
+        
+        with open(temp_path, 'wb+') as destination:
+            for chunk in file_path.chunks():
+                destination.write(chunk)
+            
+            # Load the audio file using whisper load audio
+        audio = load_audio(temp_path)
+        
+        model = whisper.load_model("base.en")
+        result = model.transcribe(audio)
+        
+            #After convering audio Clean up the temporary file
+        os.remove(temp_path)
+        os.rmdir(temp_dir)                
+        
+            # Create or update the medical report in the database using the generated text from the audio recording.
+        medical_report = MedicalReport.objects.filter(patient_id=id).first()
+        
+        if medical_report: 
+            serializer = MedicalReportSerializer(medical_report,data={'report':result['text']},partial=True)
+        else: 
+            serializer = MedicalReportSerializer(data={'patient_id':id,'report':result['text']})
+        
+        if serializer.is_valid(): 
+            serializer.save()
+            return Response({"success":"Medical Report generated successfully"},status=status.HTTP_201_CREATED)
+        else:
+            return Response({"error":serializer.errors},status=status.HTTP_400_BAD_REQUEST)    
+        
+    except RuntimeError as e: 
+        raise RuntimeError({"error":str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
