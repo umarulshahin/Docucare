@@ -82,3 +82,11 @@ Apply migrations:
 
 Now, the application should be running at http://127.0.0.1:8000/.
 
+Contact
+
+For any inquiries or issues, please contact:
+
+        GitHub: umarulshahin
+        
+        Email: umarulshahin666@gmail.com
+        
