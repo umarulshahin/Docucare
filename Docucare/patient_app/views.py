@@ -55,6 +55,7 @@ def Store_patient_Medical_Records(request):
     
     try: 
         
+        # save medical records in database
         serializer = MedicalRecordSerializer(data=data)
         if serializer.is_valid(): 
             serializer.save()
@@ -66,6 +67,8 @@ def Store_patient_Medical_Records(request):
     except RuntimeError as e: 
         raise RuntimeError({"error":str(e)})
     
+
+# ......................... Organize unstructured patient medical records to sturctured report ...............................
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -153,6 +156,7 @@ def Organize_Patient_Data(request):
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
         
+# .......................... Process Audio Records to Text ...............................
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def Process_Audio_Records(request): 
@@ -180,6 +184,7 @@ def Process_Audio_Records(request):
         
         model = whisper.load_model("base.en")
         result = model.transcribe(audio)
+        print(result["text"],'converted text')
         
             #After convering audio Clean up the temporary file
         os.remove(temp_path)
@@ -201,3 +206,30 @@ def Process_Audio_Records(request):
         
     except RuntimeError as e: 
         raise RuntimeError({"error":str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def Get_Patient_Records(request): 
+    
+    id = request.data.get('id')
+    if not id : 
+        return Response({"error":"Patient id required"},status=status.HTTP_400_BAD_REQUEST)
+    
+    try: 
+        
+        # get patient details and medical records
+        patient_data = PatientRecord.objects.filter(patient_id = id).prefetch_related('patient_id').all()
+        medical_report = MedicalReport.objects.filter(patient_id = id).first()
+        
+        data = {'patient_record':patient_data,
+                 'patient_report':medical_report,
+                 'patient_info':patient_data.first().patient_id}
+        # convert to json using serializer
+        serializer = PatientRecordDetialsSerializer(data)
+        
+        return Response({"success":serializer.data},status=status.HTTP_200_OK)
+
+    except RuntimeError as e: 
+        raise RuntimeError({"error":str(e)},status=status.HTTP_500_INTERNAL_SERVER_ERROR)    
+    

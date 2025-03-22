@@ -10,4 +10,5 @@ urlpatterns = [
     path('store_patient_medical_records/',Store_patient_Medical_Records,name='store_patient_medical_records'),
     path('organize_patient_data/',Organize_Patient_Data,name='organize_patient_data'),
     path('process_audio_records/',Process_Audio_Records,name='process_audio_records'),
+    path('get_patient_records/',Get_Patient_Records,name = 'get_patient_records'),
 ]

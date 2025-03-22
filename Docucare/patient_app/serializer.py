@@ -1,6 +1,6 @@
 from rest_framework import serializers 
 from .models import *
-from rest_framework import status
+from Authentication_app.serializer import PatientSerializer
 
 class MedicalRecordSerializer(serializers.ModelSerializer): 
     class Meta: 
@@ -12,7 +12,7 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         # validate all fields 
         if  not attrs['patient_id'] or not attrs['patient_vitals'] or not attrs['medical_history'] or not attrs['current_condition']  or not attrs['followup_date'] or not attrs['doctor_details'] or not attrs['hospital_details'] or not attrs['insurance_details'] or not attrs['additional_notes']:
             
-            raise serializers.ValidationError('please fill all the fields', status=status.HTTP_400_BAD_REQUEST)
+            raise serializers.ValidationError('please fill all the fields')
         
         return attrs
     
@@ -26,3 +26,10 @@ class MedicalReportSerializer(serializers.ModelSerializer):
         model = MedicalReport
         fields = ['report_id', 'patient_id', 'report', 'date_created']
         read_only_fields = ['report_id', 'date_created']
+        
+        
+        # Validate all the patient details and return the json
+class PatientRecordDetialsSerializer(serializers.Serializer):
+      patient_info = PatientSerializer()
+      patient_record = MedicalRecordSerializer(many=True)
+      patient_report = MedicalReportSerializer()
