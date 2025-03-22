@@ -40,7 +40,7 @@ Installation & Setup
 
 1. Clone the Repository
 
-git clone https://github.com/your-username/DocuCare.git
+git clone https://github.com/umarulshahin/Docucare.git
 cd DocuCare
 
 2. Create a Virtual Environment & Activate It
