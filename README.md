@@ -40,25 +40,24 @@ Installation & Setup
 
 1. Clone the Repository
 
-    git clone : https://github.com/umarulshahin/Docucare.git
-    
-    cd DocuCare
+        git clone : https://github.com/umarulshahin/Docucare.git
+        cd DocuCare
 
 2. Create a Virtual Environment & Activate It
 
-    Windows:
-    
-    python -m venv venv
-    venv\Scripts\activate
-    
-    Mac/Linux:
-    
-    python3 -m venv venv
-    source venv/bin/activate
+        Windows:
+        
+        python -m venv venv
+        venv\Scripts\activate
+        
+        Mac/Linux:
+        
+        python3 -m venv venv
+        source venv/bin/activate
 
 3. Install Dependencies
 
-    pip install -r requirements.txt
+        pip install -r requirements.txt
 
 4. Configure Environment Variables
 
