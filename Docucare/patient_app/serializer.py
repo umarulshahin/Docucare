@@ -5,8 +5,8 @@ from rest_framework import status
 class MedicalRecordSerializer(serializers.ModelSerializer): 
     class Meta: 
         model = PatientRecord
-        fields = ['record_id', 'patient_id', 'patient_vitals', 'medical_history', 'current_condition', 'prescribed_medicines', 'lab_tests', 'followup_date', 'doctor_details', 'hospital_details', 'insurance_details', 'additional_notes', 'date_created' ]
-    
+        fields = ['record_id', 'patient_id', 'patient_vitals', 'medical_history', 'current_condition', 'prescribed_medicines', 'lab_tests', 'followup_date', 'doctor_details', 'hospital_details', 'insurance_details', 'additional_notes', 'date_created']
+        read_only_fields = ['record_id', 'date_created']
     def validate(self, attrs):
          
         # validate all fields 
@@ -18,3 +18,11 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         return super().create(validated_data)
+    
+class MedicalReportSerializer(serializers.ModelSerializer):
+    
+    class Meta: 
+        
+        model = MedicalReport
+        fields = ['report_id', 'patient_id', 'report', 'date_created']
+        read_only_fields = ['report_id', 'date_created']

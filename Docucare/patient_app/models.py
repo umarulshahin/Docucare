@@ -18,3 +18,14 @@ class PatientRecord(models.Model):
     insurance_details = models.JSONField()
     additional_notes = models.TextField(null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
+    
+class MedicalReport(models.Model): 
+    
+    report_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    patient_id = models.ForeignKey(Patient_Info, on_delete=models.CASCADE, )
+    report = models.TextField(null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.report
+        
